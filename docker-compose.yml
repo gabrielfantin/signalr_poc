@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  wss:
+    image: ${DOCKER_REGISTRY-}wss
+    build:
+      context: wss_service
+      dockerfile: Dockerfile
