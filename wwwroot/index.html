@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>teste</title>
+    <title>SignalR Test</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 </head>
 <body>
@@ -55,7 +55,7 @@
         connection.on("ReceiveEvent", (eventBody) => {
             document.getElementById("received_events").innerHTML += eventBody;
 
-            console.log("evento recebido: " + eventBody);
+            console.log("received event: " + eventBody);
         });
 
         connection.onclose(async () => {
