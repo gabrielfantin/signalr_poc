@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>teste</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+</head>
+<body>
+
+    <form>
+        <label for="topic">Topic</label>
+        <input id="topic" type="text">
+        <button onclick="listenToTopic(); event.preventDefault();">Listen to topic</button>
+
+        <label for="event_body">Event</label>
+        <textarea id="event_body"></textarea>
+        <button onclick="sendEventToTopic(); event.preventDefault();">Send to topic</button>
+    </form>
+
+    <h3>Received events</h3>
+    <div id="received_events"></div>
+
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/default")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        async function start() {
+            try {
+                await connection.start();
+                console.log("SignalR Connected.");
+            } catch (err) {
+                console.log(err);
+                setTimeout(start, 5000);
+            }
+        };
+
+        async function listenToTopic() {
+            try {
+                await connection.invoke("ListenTo", document.getElementById("topic").value);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function sendEventToTopic() {
+            try {
+                await connection.invoke("SendEventToTopic", document.getElementById("event_body").value, document.getElementById("topic").value);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        connection.on("ReceiveEvent", (eventBody) => {
+            document.getElementById("received_events").innerHTML += eventBody;
+
+            console.log("evento recebido: " + eventBody);
+        });
+
+        connection.onclose(async () => {
+            await start();
+        });
+
+        // Start the connection.
+        start();
+    </script>
+</body>
+</html>
